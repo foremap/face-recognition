@@ -12,8 +12,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.path.join(base_path, 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = set(['jpg', 'jpeg', 'gif'])
 
-data_mapping_file = '/opt/omron/NameLabelMap.dat'
-omron_training_data = '/opt/omron/OmronTrainingData'
+omron_album = '/opt/omron/celebrity_album'
 
 client = MongoClient('10.116.66.16', 27017)
 
@@ -54,8 +53,7 @@ def omron_rec(img_path):
     print img_path
     cmd = [
         '/opt/omron/vision_face',
-        img_path, data_mapping_file,
-        omron_training_data]
+        img_path, omron_album]
     cmd = ' '.join(cmd)
     res = run(cmd)
     print res
