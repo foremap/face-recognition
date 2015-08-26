@@ -2,7 +2,7 @@ FROM opencv/32bit
 MAINTAINER Sean Chuang <sean_chuang@htc.com>
 
 # add flask-server folder
-RUN pip install Flask
+RUN pip install Flask pymongo
 ADD flask-server /opt/flask-server
 ADD omron /opt/omron
 
