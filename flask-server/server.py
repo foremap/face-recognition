@@ -56,7 +56,7 @@ def omron_rec(img_path):
         '/opt/omron/vision_face',
         img_path, omron_album]
     cmd = ' '.join(cmd)
-    res = run(cmd)
+    res = run(cmd, True)
     print res
 
     # from random import randint
