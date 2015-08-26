@@ -64,7 +64,11 @@ def omron_rec(img_path):
     # res = query_imdb(person_idx)
 
     remove(img_path)
-    return json.loads(res)
+
+    if res is not None:
+        return json.loads(res)
+    else:
+        return {}
 
 
 def remove(file_path):
