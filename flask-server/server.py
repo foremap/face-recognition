@@ -1,9 +1,8 @@
-import os, sys
-import time
+import os
+import sys
 from flask import Flask, request, render_template, session, flash, redirect, \
     url_for, jsonify
 import subprocess
-from subprocess import call
 from pymongo import MongoClient
 
 base_path = os.path.dirname(__file__)
@@ -12,8 +11,12 @@ app = Flask(__name__)
 
 app.config['UPLOAD_FOLDER'] = os.path.join(base_path, 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = set(['jpg', 'jpeg', 'gif'])
+
 data_mapping_file = '/opt/omron/NameLabelMap.dat'
 omron_training_data = '/opt/omron/OmronTrainingData'
+
+client = MongoClient('10.116.66.16', 27017)
+
 
 @app.route('/face_rec', methods=['GET', 'POST'])
 def face_rec():
@@ -26,32 +29,44 @@ def face_rec():
         res = omron_rec(file_path)
         return jsonify(res)
 
+
 @app.route('/imdb/<index>', methods=['GET'])
 def imdb_data(index):
-    client = MongoClient('10.116.66.16', 27017)
-    db = client.face_demo
-    collection = db.celebrities_new
-
-    res = collection.find_one({"idx": int(index)})
-    client.close()
-    del res['_id']
-    print res
+    res = query_imdb(index)
     return jsonify(res)
 
-###### Function Define ######
+
+# Function Define #
+def query_imdb(index):
+    db = client.face_demo
+    collection = db.celebrities_new
+    res = collection.find_one({"idx": int(index)})
+    del res['_id']
+    return res
+
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
+
 def omron_rec(img_path):
     print img_path
-    cmd = ['/opt/omron/vision_face', img_path, data_mapping_file, omron_training_data]
+    cmd = [
+        '/opt/omron/vision_face',
+        img_path, data_mapping_file,
+        omron_training_data]
     cmd = ' '.join(cmd)
     res = run(cmd)
     print res
-    res = {'name': "Sean_Chuang", 'Email': "sean_chuang@htc.com", 'xxx': "OOO"}
+
+    from random import randint
+    person_idx = randint(1, 530) - 1
+    res = query_imdb(person_idx)
+
     remove(img_path)
     return res
+
 
 def remove(file_path):
     try:
@@ -59,10 +74,12 @@ def remove(file_path):
     except OSError:
         pass
 
+
 def run(cmd, need_return=False):
     print "run the cmd => " + cmd
     if need_return:
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
 
@@ -79,7 +96,7 @@ def run(cmd, need_return=False):
     if need_return:
         result = out1.decode()
     else:
-        result = "" 
+        result = ""
 
     return result
 
@@ -87,7 +104,7 @@ if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8888)
 
 
-###### Test #######
+# Test #
 # curl -F "file=@test.jpg;" http://localhost:8888/face_rec
 # {
 #   "Email": "sean_chuang@htc.com",
