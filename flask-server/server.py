@@ -4,6 +4,7 @@ from flask import Flask, request, render_template, session, flash, redirect, \
     url_for, jsonify
 import subprocess
 from pymongo import MongoClient
+import json
 
 base_path = os.path.dirname(__file__)
 
@@ -58,12 +59,12 @@ def omron_rec(img_path):
     res = run(cmd)
     print res
 
-    from random import randint
-    person_idx = randint(1, 530) - 1
-    res = query_imdb(person_idx)
+    # from random import randint
+    # person_idx = randint(1, 530) - 1
+    # res = query_imdb(person_idx)
 
     remove(img_path)
-    return res
+    return json.loads(res)
 
 
 def remove(file_path):
