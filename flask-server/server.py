@@ -22,8 +22,9 @@ client = MongoClient('10.116.66.16', 27017)
 def face_rec():
     if request.method == 'POST':
         img = request.files['file']
-        if img and allowed_file(img.filename):
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], img.filename)
+        img_name = to_utf8(img.filename)
+        if img and allowed_file(img_name):
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], img_name)
             img.save(file_path)
 
         res = omron_rec(file_path)
@@ -56,7 +57,7 @@ def omron_rec(img_path):
         '/opt/omron/vision_face',
         img_path, omron_album]
     cmd = ' '.join(cmd)
-    res = run(cmd, True)
+    res = to_utf8(run(cmd, True))
     print res
 
     # from random import randint
@@ -75,6 +76,13 @@ def remove(file_path):
         os.remove(file_path)
     except OSError:
         pass
+
+
+def to_utf8(text):
+    if text:
+        return text.encode('utf8', 'replace')
+    else:
+        return None
 
 
 def run(cmd, need_return=False):
@@ -96,7 +104,7 @@ def run(cmd, need_return=False):
     out1, err1 = p.communicate()
 
     if need_return:
-        result = out1.decode()
+        result = out1.decode('utf8')
     else:
         result = ""
 
