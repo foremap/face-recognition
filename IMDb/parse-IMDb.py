@@ -48,12 +48,12 @@ def main(name):
 
     director = person.get('director')
     if director:
-        d_list = [to_utf8(x.get('long imdb canonical title'))
+        d_list = [to_utf8(x.get('long imdb title'))
                     for x in director[:3]]
         res['Last_works'] = d_list
     act = person.get('actor') or person.get('actress')
     if act:
-        a_list = [to_utf8(x.get('long imdb canonical title'))
+        a_list = [to_utf8(x.get('long imdb title'))
                     for x in act[:5]]
         res['Last_works'] = a_list
 
@@ -71,6 +71,10 @@ def to_utf8(data):
 def mongo_insert(data):
     collection.insert(data)
 
+
+def mongo_update_by_idx(idx, data):
+    collection.update({'idx': idx}, data, upsert=True)
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print 'Only one argument is required:'
@@ -87,5 +91,6 @@ if __name__ == '__main__':
         print name, item[1]
         info = main(name)
         info['idx'] = int(item[1])
-        mongo_insert(info)
+        # mongo_insert(info)
+        mongo_update_by_idx(info['idx'], info)
     client.close()
