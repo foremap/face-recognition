@@ -65,7 +65,7 @@ def omron_rec(img_path):
     # res = query_imdb(person_idx)
 
     # Example result #
-    # res = '{\
+    # res = 'cond:0.375;a:342;b:32;{\
     # "_id" : {\
     #     "$oid" : "55e3cf57f058500f9238f601"\
     # }, \
@@ -75,13 +75,13 @@ def omron_rec(img_path):
     # "name" : "Steve Wang", \
     # "location" : "Xindian TPE1 ", \
     # "idx" : 530\
-    # };cond:0.375;a:342;b:32'
+    # }'
 
     remove(img_path)
 
     if res:
-        json_data = res.split(';', 2)[0]
-        others = res.split('};', 2)[1]
+        others = res.split(';{')[0]
+        json_data = '{' + res.split(';{', 2)[1]
         result = json.loads(json_data)
         for item in others.split(';'):
             key = item.split(':')[0]
