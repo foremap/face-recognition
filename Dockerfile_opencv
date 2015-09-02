@@ -46,10 +46,10 @@ RUN apt-get update && apt-get install -y \
   tmux
 
 # put vision face in the docker
-ADD files /opt/files
+ADD files/opencv /opt/opencv
 
 # build opencv lib
-RUN cd /opt/files && ./build_opencv.sh
+RUN cd /opt/opencv && ./build_opencv.sh
 
 # cleanup
 RUN apt-get clean && rm -rf /tmp/* /var/tmp/*
