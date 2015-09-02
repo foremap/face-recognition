@@ -3,8 +3,8 @@ MAINTAINER Sean Chuang <sean_chuang@htc.com>
 
 # add flask-server folder
 RUN pip install Flask pymongo simplejson
-ADD flask-server /opt/flask-server
-ADD omron /opt/omron
+#ADD flask-server /opt/flask-server
+#ADD omron /opt/omron
 
 # add mongodb .so to /usr/lib
 RUN mv /opt/omron/lib* /usr/lib/
